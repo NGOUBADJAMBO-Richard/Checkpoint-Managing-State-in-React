@@ -82,21 +82,14 @@ li div {
   cursor: pointer;
 }
 
-.task-item.completed .task-name,
 .task-item.completed .task-description {
   text-decoration: line-through;
   color: #999;
 }
 
-.task-name {
-  font-weight: bold;
+.task-description {
   margin-right: 10px;
   flex-grow: 1;
-}
-
-.task-description {
-  color: #666;
-  flex-grow: 2;
 }
 
 button.edit,
@@ -117,14 +110,6 @@ button.delete:hover {
   background: #c82333;
 }
 
-p.error {
-  color: red;
-  font-size: 14px;
-  margin: 0;
-}
-
-/* src/App.css */
-
 .filters {
   margin-bottom: 20px;
 }
@@ -141,4 +126,10 @@ p.error {
 .filters button.active {
   background: #007bff;
   color: #fff;
+}
+
+p.error {
+  color: red;
+  font-size: 14px;
+  margin: 0;
 }

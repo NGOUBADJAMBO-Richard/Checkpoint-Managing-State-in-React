@@ -1,15 +1,13 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
-import TaskList from './components/TaskList';
-import TaskForm from './components/TaskForm';
+import AddTask from './components/AddTask';
+import ListTask from './components/ListTask';
 import './App.css';
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('priority');
 
-  // Load tasks from localStorage when the app initializes
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem('tasks'));
     if (storedTasks) {
@@ -17,7 +15,6 @@ const App = () => {
     }
   }, []);
 
-  // Save tasks to localStorage whenever the tasks state changes
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
@@ -35,49 +32,30 @@ const App = () => {
   };
 
   const toggleComplete = (id) => {
-    setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)));
+    setTasks(tasks.map(task => (task.id === id ? { ...task, isDone: !task.isDone } : task)));
   };
 
-  const filterTasks = (tasks) => {
-    switch (filter) {
-      case 'active':
-        return tasks.filter(task => !task.completed);
-      case 'completed':
-        return tasks.filter(task => task.completed);
-      default:
-        return tasks;
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'active') {
+      return !task.isDone;
+    } else if (filter === 'completed') {
+      return task.isDone;
+    } else {
+      return true;
     }
-  };
-
-  const sortTasks = (tasks) => {
-    switch (sort) {
-      case 'dueDate':
-        return tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-      default:
-        return tasks.sort((a, b) => b.priority - a.priority);
-    }
-  };
-
-  const displayedTasks = sortTasks(filterTasks(tasks));
+  });
 
   return (
     <div className="App">
       <h1>Todo List</h1>
-      <TaskForm addTask={addTask} />
+      <AddTask addTask={addTask} />
       <div className="filters">
-        <button onClick={() => setFilter('all')}>All</button>
-        <button onClick={() => setFilter('active')}>Active</button>
-        <button onClick={() => setFilter('completed')}>Completed</button>
+        <button onClick={() => setFilter('all')} className={filter === 'all' ? 'active' : ''}>All</button>
+        <button onClick={() => setFilter('active')} className={filter === 'active' ? 'active' : ''}>Active</button>
+        <button onClick={() => setFilter('completed')} className={filter === 'completed' ? 'active' : ''}>Completed</button>
       </div>
-      <div className="sort">
-        <label>Sort by:</label>
-        <select onChange={(e) => setSort(e.target.value)} value={sort}>
-          <option value="priority">Priority</option>
-          <option value="dueDate">Due Date</option>
-        </select>
-      </div>
-      <TaskList
-        tasks={displayedTasks}
+      <ListTask
+        tasks={filteredTasks}
         updateTask={updateTask}
         deleteTask={deleteTask}
         toggleComplete={toggleComplete}
